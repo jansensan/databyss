@@ -28,7 +28,10 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
   if (
     _entity &&
     !isAtomicInlineType(_entity.type) &&
-    !_entity.text.textValue.match(`\n`)
+    // don't bake if there are carriage returns
+    !_entity.text.textValue.match(`\n`) &&
+    // don't bake unless there's at least one character
+    _entity.text.textValue.trim().length > 1
   ) {
     const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
 

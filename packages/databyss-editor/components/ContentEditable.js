@@ -301,9 +301,13 @@ const ContentEditable = ({ onDocumentChange }) => {
     draft => {
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
+        // HACK: if we change the block draft when they are value equivalent,
+        // we were seeing weird behavior at the beginning of the line
+        if (!_.isEqual(_block, draft[op.index])) {
+          draft[op.index].children = _block.children
+          draft[op.index].type = _block.type
+          draft[op.index].isBlock = _block.isBlock
+        }
       })
     }
   )
