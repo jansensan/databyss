@@ -70,7 +70,7 @@ export default (state, action) =>
     const { payload } = action
 
     // default nextSelection to `payload.selection` (which may be undef)
-    const nextSelection = payload.selection
+    let nextSelection = payload.selection
 
     switch (action.type) {
       case SPLIT: {
@@ -250,6 +250,11 @@ export default (state, action) =>
           index: payload.index,
           block: _entity,
         })
+        // reset selection to beginning line
+        nextSelection = {
+          focus: { index: payload.index, offset: 0 },
+          anchor: { index: payload.index, offset: 0 },
+        }
         break
       }
       case SET_SELECTION:

@@ -17,6 +17,7 @@ import {
   flattenOffset,
   stateBlockToSlateBlock,
   toggleMark,
+  copyTextNodeTo,
 } from '../lib/slateUtils'
 import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
@@ -301,13 +302,9 @@ const ContentEditable = ({ onDocumentChange }) => {
     draft => {
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
-        // HACK: if we change the block draft when they are value equivalent,
-        // we were seeing weird behavior at the beginning of the line
-        if (!_.isEqual(_block, draft[op.index])) {
-          draft[op.index].children = _block.children
-          draft[op.index].type = _block.type
-          draft[op.index].isBlock = _block.isBlock
-        }
+        draft[op.index].children = _block.children
+        draft[op.index].type = _block.type
+        draft[op.index].isBlock = _block.isBlock
       })
     }
   )
@@ -326,6 +323,7 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   if (!_.isEqual(editor.selection, nextSelection)) {
     Transforms.setSelection(editor, nextSelection)
+
     // HACK only needs to be applied when editor is focused and Range is expanded (applying formats and marks)
     if (editor.selection && Range.isExpanded(editor.selection)) {
       // HACK:
